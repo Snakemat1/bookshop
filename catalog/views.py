@@ -43,14 +43,14 @@ class CategoryListView(ListView):
 class CategoryDetailView(DetailView):
     model = Category
     template_name = "catalog/category_detail.html"
-    context_object_name = "catalog"
+    context_object_name = "category"
     slug_field = "slug"
     slug_url_kwarg = "slug"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context["books"] = self.object.book_set.all()
+        context["books"] = self.object.books.all()
 
         return context
     

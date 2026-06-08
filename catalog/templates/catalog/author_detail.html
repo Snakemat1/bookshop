@@ -1,0 +1,40 @@
+{% extends "catalog/base.html" %}
+
+{% block title %}{{ author.full_name }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-3">
+        {% if author.photo %}
+            <img src="{{ author.photo.url }}" class="img-fluid rounded-circle" alt="{{ author.full_name }}">
+        {% else %}
+            <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center mx-auto" style="width: 150px; height: 150px;">
+                <span class="text-light fs-1">{{ author.first_name.0 }}</span>
+            </div>
+        {% endif %}
+    </div>
+    <div class="col-md-9">
+        <h1>{{ author.full_name }}</h1>
+        <p>{{ author.bio }}</p>
+    </div>
+</div>
+
+<h2>Книги автора</h2>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for book in books %}
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ book.title }}</h5>
+                <p class="card-text text-primary">{{ book.price }} ₽</p>
+            </div>
+            <div class="card-footer">
+                <a href="{{ book.get_absolute_url }}" class="btn btn-primary btn-sm w-100">Подробнее</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+        <p class="text-muted">Книг пока нет.</p>
+    {% endfor %}
+</div>
+{% endblock %}

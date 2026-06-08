@@ -1,0 +1,24 @@
+{% extends "catalog/base.html" %}
+
+{% block title %}Авторы{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Авторы</h1>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for author in authors %}
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ author.full_name }}</h5>
+                <p class="card-text text-muted">{{ author.bio|truncatewords:20 }}</p>
+            </div>
+            <div class="card-footer">
+                <a href="{{ author.get_absolute_url }}" class="btn btn-outline-primary btn-sm w-100">Книги автора</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+        <p class="text-muted">Авторов пока нет.</p>
+    {% endfor %}
+</div>
+{% endblock %}

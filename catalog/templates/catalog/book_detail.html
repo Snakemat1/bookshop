@@ -1,0 +1,35 @@
+{% extends "catalog/base.html" %}
+
+{% block title %}{{ book.title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        {% if book.cover %}
+            <img src="{{ book.cover.url }}" class="img-fluid rounded" alt="{{ book.title }}">
+        {% else %}
+            <div class="bg-secondary rounded d-flex align-items-center justify-content-center" style="height: 400px;">
+                <span class="text-light">Нет обложки</span>
+            </div>
+        {% endif %}
+    </div>
+    <div class="col-md-8">
+        <h1>{{ book.title }}</h1>
+        <p class="text-muted">
+            Авторы:
+            {% for author in book.authors.all %}
+                <a href="{{ author.get_absolute_url }}">{{ author.full_name }}</a>{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </p>
+        <p>Категория: <a href="{{ book.category.get_absolute_url }}">{{ book.category.name }}</a></p>
+        <h3 class="text-primary">{{ book.price }} ₽</h3>
+        {% if book.stock > 0 %}
+            <span class="badge bg-success">В наличии: {{ book.stock }} шт.</span>
+        {% else %}
+            <span class="badge bg-danger">Нет в наличии</span>
+        {% endif %}
+        <hr>
+        <p>{{ book.description }}</p>
+    </div>
+</div>
+{% endblock %}

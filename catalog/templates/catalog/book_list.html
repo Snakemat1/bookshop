@@ -1,0 +1,36 @@
+{% extends "catalog/base.html" %}
+
+{% block title %}Все книги{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Все книги</h1>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for book in books %}
+    <div class="col">
+        <div class="card h-100">
+            {% if book.cover %}
+                <img src="{{ book.cover.url }}" class="card-img-top" alt="{{ book.title }}" style="height: 250px; object-fit: cover;">
+            {% else %}
+                <div class="bg-secondary d-flex align-items-center justify-content-center" style="height: 250px;">
+                    <span class="text-light">Нет обложки</span>
+                </div>
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ book.title }}</h5>
+                <p class="card-text text-muted">
+                    {% for author in book.authors.all %}
+                        {{ author.full_name }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </p>
+                <p class="card-text"><strong>{{ book.price }} ₽</strong></p>
+            </div>
+            <div class="card-footer">
+                <a href="{{ book.get_absolute_url }}" class="btn btn-primary btn-sm w-100">Подробнее</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+        <p class="text-muted">Книг пока нет.</p>
+    {% endfor %}
+</div>
+{% endblock %}
