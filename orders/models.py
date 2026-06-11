@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from catalog.models import Book
+from django.conf import settings
 
 STATUS_PENDING  = 'pending'
 STATUS_PAID     = 'paid'
@@ -39,4 +40,3 @@ class OrderItem(models.Model):
     def get_total_price(self):
         return self.price* self.quantity
 
-    
