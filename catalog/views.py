@@ -5,6 +5,8 @@ from django.db.models import Avg, Count
 from reviews.forms import ReviewForm
 from orders.models import OrderItem
 from django.db.models import Q
+from orders.models import STATUS_DONE
+from .services import get_categories
 
 class BookListView(ListView):
     model = Book
@@ -36,7 +38,7 @@ class BookListView(ListView):
     
     def get_context_data(self, **kwargs):
         context =  super().get_context_data(**kwargs)
-        context["categories"] = Category.objects.all()
+        context["categories"] = get_categories()
         return context
     
 class BookDetailView(DetailView):
@@ -60,7 +62,7 @@ class BookDetailView(DetailView):
         if self.request.user.is_authenticated:
             user_review = book.reviews.filter(user=self.request.user).first()
             context["user_review"] = user_review
-            has_purchased = OrderItem.objects.filter(order__user=self.request.user, book=book).exists()
+            has_purchased = OrderItem.objects.filter(order__user=self.request.user, book=book, order__status=STATUS_DONE,).exists()
             context["can_review"] = has_purchased and user_review is None
         else:
             context["user_review"] = None

@@ -5,13 +5,13 @@ from .models import Review
 from orders.models import OrderItem
 from catalog.models import Book
 from .forms import ReviewForm
-
+from orders.models import STATUS_DONE
 
 @login_required
 def add_review(request, book_slug):
     book = get_object_or_404(Book, slug=book_slug)
     already_review = Review.objects.filter(user=request.user, book=book).exists()
-    has_purchased = OrderItem.objects.filter(order__user=request.user, book=book).exists()
+    has_purchased = OrderItem.objects.filter(order__user=request.user, book=book, order__status = STATUS_DONE).exists()
 
     if already_review or not has_purchased:
         return redirect("catalog:book_detail", slug=book_slug)
