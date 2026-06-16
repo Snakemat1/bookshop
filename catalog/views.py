@@ -4,12 +4,41 @@ from .models import Book, Author, Category
 from django.db.models import Avg, Count
 from reviews.forms import ReviewForm
 from orders.models import OrderItem
+from django.db.models import Q
 
 class BookListView(ListView):
     model = Book
     template_name = "catalog/book_list.html"
     context_object_name = "books"
 
+    def get_queryset(self):
+        queryset =  super().get_queryset().select_related("category").prefetch_related("authors")
+        q = self.request.GET.get("q")
+        if q:
+            queryset = queryset.filter(
+                Q(title__icontains=q) |
+                Q(authors__first_name__icontains=q) |
+                Q(authors__last_name__icontains=q)
+            )
+
+        category_slug = self.request.GET.get("category")
+        if category_slug:
+            queryset = queryset.filter(category__slug=category_slug)
+
+        min_price = self.request.GET.get("min_price")
+        if min_price:
+            queryset = queryset.filter(price__gte=min_price)
+
+        max_price = self.request.GET.get("max_price")
+        if max_price:
+            queryset = queryset.filter(price__lte=max_price)
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        context["categories"] = Category.objects.all()
+        return context
+    
 class BookDetailView(DetailView):
     model = Book
     template_name = "catalog/book_detail.html"

@@ -4,6 +4,45 @@
 
 {% block content %}
 <h1 class="mb-4">Все книги</h1>
+
+<form method="GET" class="row g-3 mb-4 align-items-end">
+    <div class="col-md-4">
+        <label for="q" class="form-label">Поиск</label>
+        <input type="text" name="q" id="q" class="form-control"
+               placeholder="Название книги или автор"
+               value="{{ request.GET.q }}">
+    </div>
+
+    <div class="col-md-3">
+        <label for="category" class="form-label">Категория</label>
+        <select name="category" id="category" class="form-select">
+            <option value="">Все категории</option>
+            {% for category in categories %}
+                <option value="{{ category.slug }}"
+                    {% if request.GET.category == category.slug %}selected{% endif %}>
+                    {{ category.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <label for="min_price" class="form-label">Цена от</label>
+        <input type="number" name="min_price" id="min_price" class="form-control"
+               value="{{ request.GET.min_price }}">
+    </div>
+
+    <div class="col-md-2">
+        <label for="max_price" class="form-label">Цена до</label>
+        <input type="number" name="max_price" id="max_price" class="form-control"
+               value="{{ request.GET.max_price }}">
+    </div>
+
+    <div class="col-md-1">
+        <button type="submit" class="btn btn-primary w-100">Найти</button>
+    </div>
+</form>
+
 <div class="row row-cols-1 row-cols-md-3 g-4">
     {% for book in books %}
     <div class="col">
