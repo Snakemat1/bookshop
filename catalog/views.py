@@ -7,6 +7,7 @@ from orders.models import OrderItem
 from django.db.models import Q
 from orders.models import STATUS_DONE
 from .services import get_categories
+from reviews.services import get_book_reviews_data
 
 class BookListView(ListView):
     model = Book
@@ -38,6 +39,7 @@ class BookListView(ListView):
     
     def get_context_data(self, **kwargs):
         context =  super().get_context_data(**kwargs)
+
         context["categories"] = get_categories()
         return context
     
@@ -51,11 +53,10 @@ class BookDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         book = self.object
-        context["reviews"] = book.reviews.select_related("user")
-        
-        aggregates = book.reviews.aggregate(avg_rating=Avg("rating"), review_count=Count("id"))
-        context["avg_rating"] = aggregates["avg_rating"]
-        context["review_count"] = aggregates["review_count"]
+        data = get_book_reviews_data(book)
+        context["reviews"] = data["reviews"]
+        context["avg_rating"] = data["avg_rating"]
+        context["review_count"] = data["review_count"]
 
         context["review_form"] = ReviewForm()
         
@@ -68,6 +69,9 @@ class BookDetailView(DetailView):
             context["user_review"] = None
             context["can_review"] = False
         return context
+    
+    def get_queryset(self):
+        return super().get_queryset().select_related("category").prefetch_related("authors")
 
 class AuthorListView(ListView):
     model = Author
